@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: email
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+  - host: email.0d136eaef9f24e1c828e.westeurope.aksapp.io
+    http:
+      paths:
+      - backend:
+          serviceName: email
+          servicePort: 8080
+        path: /
