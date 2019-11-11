@@ -1,8 +1,10 @@
+using System.Net.Mail;
 using demofluffyspoon.contracts;
 using demofluffyspoon.contracts.Grains;
 using demofluffyspoon.contracts.Models;
 using FluentValidation.AspNetCore;
 using fluffyspoon.email.Grains;
+using fluffyspoon.email.ViewModels;
 using GiG.Core.DistributedTracing.Web.Extensions;
 using GiG.Core.HealthChecks.Extensions;
 using GiG.Core.Hosting.Extensions;
@@ -39,6 +41,7 @@ namespace fluffyspoon.email
         {
             // Info Management
             services.ConfigureInfoManagement(Configuration);
+            services.Configure<SmtpOptions>(Configuration.GetSection(SmtpOptions.DefaultSectionName));
 
             // Health Checks
             services.ConfigureHealthChecks(Configuration);

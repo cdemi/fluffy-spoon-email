@@ -16,12 +16,12 @@ namespace fluffyspoon.email.Grains
     [ImplicitStreamSubscription(nameof(UserVerifiedEvent))]
     public class EmailSenderGrain : Grain, IEmailGrain, IAsyncObserver<UserVerifiedEvent>
     {
-        private readonly SmtpSettings _smtpSettings;
+        private readonly SmtpOptions _smtpOptions;
         private IAsyncStream<EmailSentEvent> _emailSentStream;
 
-        public EmailSenderGrain(IOptions<SmtpSettings> smtpSettings)
+        public EmailSenderGrain(IOptions<SmtpOptions> smtpOptions)
         {
-            _smtpSettings = smtpSettings.Value;
+            _smtpOptions = smtpOptions.Value;
         }
 
         public override async Task OnActivateAsync()
@@ -38,9 +38,9 @@ namespace fluffyspoon.email.Grains
 
         public async Task OnNextAsync(UserVerifiedEvent item, StreamSequenceToken token = null)
         {
-            SmtpClient smtpClient = new SmtpClient(_smtpSettings.Hostname)
+            SmtpClient smtpClient = new SmtpClient(_smtpOptions.Hostname)
             {
-                Credentials = new NetworkCredential(_smtpSettings.Username, _smtpSettings.Password)
+                Credentials = new NetworkCredential(_smtpOptions.Username, _smtpOptions.Password)
             };
 
             var stopwatch = new Stopwatch();
