@@ -26,15 +26,15 @@ spec:
                 name: smtpsecret
                 key: hostname
           - name: Smtp_Username
-              valueFrom:
-                secretKeyRef:
-                  name: smtpsecret
-                  key: username
+            valueFrom:
+              secretKeyRef:
+                name: smtpsecret
+                key: username
           - name: Smtp_Password
-              valueFrom:
-                secretKeyRef:
-                  name: smtpsecret
-                  key: password
+            valueFrom:
+              secretKeyRef:
+                name: smtpsecret
+                key: password
           image: fluffyspoon.azurecr.io/email
           ports:
           - containerPort: 8080
