@@ -1,4 +1,6 @@
 using demofluffyspoon.contracts;
+using demofluffyspoon.contracts.Grains;
+using demofluffyspoon.contracts.Models;
 using FluentValidation.AspNetCore;
 using fluffyspoon.email.Grains;
 using GiG.Core.DistributedTracing.Web.Extensions;
@@ -9,6 +11,7 @@ using GiG.Core.Orleans.Clustering.Extensions;
 using GiG.Core.Orleans.Clustering.Kubernetes.Extensions;
 using GiG.Core.Orleans.Silo.Extensions;
 using GiG.Core.Orleans.Streams.Extensions;
+using GiG.Core.Orleans.Streams.Kafka.Extensions;
 using GiG.Core.Web.Docs.Extensions;
 using GiG.Core.Web.FluentValidation.Extensions;
 using GiG.Core.Web.Hosting.Extensions;
@@ -51,11 +54,11 @@ namespace fluffyspoon.email
 
             // Configure Api Behavior Options
             services.ConfigureApiBehaviorOptions();
-            
+
             // Add Orleans Streams Services
             services.AddStreamFactory();
         }
-        
+
         // This method gets called by the runtime. Use this method to configure Orleans.
         public static void ConfigureOrleans(HostBuilderContext ctx, ISiloBuilder builder)
         {
@@ -69,8 +72,18 @@ namespace fluffyspoon.email
                 })
                 .ConfigureEndpoints()
                 .AddAssemblies(typeof(EmailSenderGrain))
-                .AddSimpleMessageStreamProvider(Constants.StreamProviderName)
+                .AddAssemblies(typeof(IEmailGrain))
+                .AddKafka(Constants.StreamProviderName)
+                .WithOptions(options =>
+                {
+                    options.FromConfiguration(ctx.Configuration);
+                    options.AddTopic(nameof(UserVerifiedEvent));
+                    options.AddTopic(nameof(EmailSentEvent));
+                })
+                .AddJson()
+                .Build()
                 .AddMemoryGrainStorage("PubSubStore")
+                .AddMemoryGrainStorageAsDefault()
                 .UseMembershipProvider(configuration, x =>
                 {
                     x.ConfigureConsulClustering(configuration);
