@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace fluffyspoon.email.Grains
 {
-    [ImplicitStreamSubscription(nameof(UserRegisteredEvent))]
+    [ImplicitStreamSubscription(nameof(UserVerifiedEvent))]
     public class EmailSenderGrain : Grain, IEmailGrain, IAsyncObserver<UserVerifiedEvent>
     {
         private readonly SmtpSettings _smtpSettings;
