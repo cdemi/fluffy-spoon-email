@@ -20,6 +20,21 @@ spec:
             value: Kubernetes
           - name: Orleans__Streams__Kafka__Brokers
             value: cp-kafka:9092
+          - name: Smtp_Hostname
+            valueFrom:
+              secretKeyRef:
+                name: smtpsecret
+                key: hostname
+          - name: Smtp_Username
+              valueFrom:
+                secretKeyRef:
+                  name: smtpsecret
+                  key: username
+          - name: Smtp_Password
+              valueFrom:
+                secretKeyRef:
+                  name: smtpsecret
+                  key: password
           image: fluffyspoon.azurecr.io/email
           ports:
           - containerPort: 8080

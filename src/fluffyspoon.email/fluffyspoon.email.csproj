@@ -7,9 +7,11 @@
     <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
     <LangVersion>latest</LangVersion>
     <NoWarn>CS1591</NoWarn>
+    <RootNamespace>fluffyspoon.registration</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="demofluffyspoon.contracts" Version="1.1.43" />
     <PackageReference Include="GiG.Core.Configuration" Version="1.2.3.209" />
     <PackageReference Include="GiG.Core.DistributedTracing.Web" Version="1.2.3.209" />
     <PackageReference Include="GiG.Core.HealthChecks" Version="1.2.3.209" />
@@ -33,7 +35,7 @@
    </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\fluffyspoon.registration.contracts\fluffyspoon.registration.contracts.csproj" />
+    <Folder Include="Controllers" />
   </ItemGroup>
   
 </Project>

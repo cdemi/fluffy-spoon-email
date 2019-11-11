@@ -1,4 +1,4 @@
-namespace fluffyspoon.registration.ViewModels
+namespace fluffyspoon.email.ViewModels
 {
     public class RegisterUserModel
     {

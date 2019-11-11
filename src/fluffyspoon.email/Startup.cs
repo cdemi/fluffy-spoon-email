@@ -1,13 +1,12 @@
+using demofluffyspoon.contracts;
 using FluentValidation.AspNetCore;
-using fluffyspoon.registration.contracts;
-using fluffyspoon.registration.Grains;
+using fluffyspoon.email.Grains;
 using GiG.Core.DistributedTracing.Web.Extensions;
 using GiG.Core.HealthChecks.Extensions;
 using GiG.Core.Hosting.Extensions;
 using GiG.Core.Orleans.Clustering.Consul.Extensions;
 using GiG.Core.Orleans.Clustering.Extensions;
 using GiG.Core.Orleans.Clustering.Kubernetes.Extensions;
-using GiG.Core.Orleans.Silo.Dashboard.Extensions;
 using GiG.Core.Orleans.Silo.Extensions;
 using GiG.Core.Orleans.Streams.Extensions;
 using GiG.Core.Web.Docs.Extensions;
@@ -21,7 +20,7 @@ using Orleans.Hosting;
 using OrleansDashboard;
 using HostBuilderContext = Microsoft.Extensions.Hosting.HostBuilderContext;
 
-namespace fluffyspoon.registration
+namespace fluffyspoon.email
 {
     public class Startup
     {
@@ -69,7 +68,7 @@ namespace fluffyspoon.registration
                     x.HostSelf = false;
                 })
                 .ConfigureEndpoints()
-                .AddAssemblies(typeof(RegistrationGrain))
+                .AddAssemblies(typeof(EmailSenderGrain))
                 .AddSimpleMessageStreamProvider(Constants.StreamProviderName)
                 .AddMemoryGrainStorage("PubSubStore")
                 .UseMembershipProvider(configuration, x =>
