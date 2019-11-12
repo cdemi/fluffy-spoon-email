@@ -1,4 +1,4 @@
-﻿namespace fluffyspoon.registration.Options
+﻿namespace fluffyspoon.email.Options
 {
     public class SmtpOptions
     {

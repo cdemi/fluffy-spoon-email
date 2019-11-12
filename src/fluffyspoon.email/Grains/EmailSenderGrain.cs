@@ -1,18 +1,18 @@
-using demofluffyspoon.contracts;
-using demofluffyspoon.contracts.Grains;
-using demofluffyspoon.contracts.Models;
-using fluffyspoon.registration.Options;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Orleans;
-using Orleans.Streams;
 using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using demofluffyspoon.contracts;
+using demofluffyspoon.contracts.Grains;
+using demofluffyspoon.contracts.Models;
+using fluffyspoon.email.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Orleans;
+using Orleans.Streams;
 
-namespace fluffyspoon.registration.Grains
+namespace fluffyspoon.email.Grains
 {
     [ImplicitStreamSubscription(nameof(UserVerifiedEvent))]
     public class EmailSenderGrain : Grain, IEmailGrain, IAsyncObserver<UserVerifiedEvent>

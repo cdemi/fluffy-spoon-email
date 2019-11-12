@@ -1,8 +1,8 @@
 using demofluffyspoon.contracts;
 using demofluffyspoon.contracts.Grains;
 using demofluffyspoon.contracts.Models;
-using fluffyspoon.registration.Grains;
-using fluffyspoon.registration.Options;
+using fluffyspoon.email.Grains;
+using fluffyspoon.email.Options;
 using GiG.Core.DistributedTracing.Web.Extensions;
 using GiG.Core.HealthChecks.Extensions;
 using GiG.Core.Hosting.Extensions;
@@ -20,7 +20,7 @@ using Orleans.Hosting;
 using OrleansDashboard;
 using HostBuilderContext = Microsoft.Extensions.Hosting.HostBuilderContext;
 
-namespace fluffyspoon.registration
+namespace fluffyspoon.email
 {
     public class Startup
     {

@@ -7,7 +7,6 @@
     <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
     <LangVersion>latest</LangVersion>
     <NoWarn>CS1591</NoWarn>
-    <RootNamespace>fluffyspoon.registration</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
