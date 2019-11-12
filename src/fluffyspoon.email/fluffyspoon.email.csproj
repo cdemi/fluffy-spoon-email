@@ -21,13 +21,8 @@
     <PackageReference Include="GiG.Core.Orleans.Clustering.Consul" Version="1.2.3.209" />
     <PackageReference Include="GiG.Core.Orleans.Clustering.Kubernetes" Version="1.2.3.209" />
     <PackageReference Include="GiG.Core.Orleans.Silo" Version="1.2.3.209" />
-    <PackageReference Include="GiG.Core.Orleans.Silo.Dashboard" Version="1.2.3.209" />
-    <PackageReference Include="GiG.Core.Orleans.Streams" Version="1.2.3.209" />
     <PackageReference Include="GiG.Core.Orleans.Streams.Kafka" Version="1.2.3.209" />
-    <PackageReference Include="GiG.Core.Web.Docs" Version="1.2.3.209" />
-    <PackageReference Include="GiG.Core.Web.FluentValidation" Version="1.2.3.209" />
     <PackageReference Include="GiG.Core.Web.Hosting" Version="1.2.3.209" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="8.5.1" />
     <PackageReference Include="Microsoft.Orleans.Server" Version="3.0.0" />
     <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -35,9 +30,5 @@
     <PackageReference Include="Orleans.Streams.Kafka" Version="4.0.0-dev-118" />
     <PackageReference Include="OrleansDashboard" Version="3.0.3" />
    </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers" />
-  </ItemGroup>
   
 </Project>

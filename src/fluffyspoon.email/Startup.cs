@@ -1,10 +1,8 @@
-using System.Net.Mail;
 using demofluffyspoon.contracts;
 using demofluffyspoon.contracts.Grains;
 using demofluffyspoon.contracts.Models;
-using FluentValidation.AspNetCore;
-using fluffyspoon.email.Grains;
-using fluffyspoon.email.ViewModels;
+using fluffyspoon.registration.Grains;
+using fluffyspoon.registration.Options;
 using GiG.Core.DistributedTracing.Web.Extensions;
 using GiG.Core.HealthChecks.Extensions;
 using GiG.Core.Hosting.Extensions;
@@ -12,10 +10,7 @@ using GiG.Core.Orleans.Clustering.Consul.Extensions;
 using GiG.Core.Orleans.Clustering.Extensions;
 using GiG.Core.Orleans.Clustering.Kubernetes.Extensions;
 using GiG.Core.Orleans.Silo.Extensions;
-using GiG.Core.Orleans.Streams.Extensions;
 using GiG.Core.Orleans.Streams.Kafka.Extensions;
-using GiG.Core.Web.Docs.Extensions;
-using GiG.Core.Web.FluentValidation.Extensions;
 using GiG.Core.Web.Hosting.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -25,7 +20,7 @@ using Orleans.Hosting;
 using OrleansDashboard;
 using HostBuilderContext = Microsoft.Extensions.Hosting.HostBuilderContext;
 
-namespace fluffyspoon.email
+namespace fluffyspoon.registration
 {
     public class Startup
     {
@@ -39,27 +34,18 @@ namespace fluffyspoon.email
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Info Management
-            services.ConfigureInfoManagement(Configuration);
+            // SMTP
             services.Configure<SmtpOptions>(Configuration.GetSection(SmtpOptions.DefaultSectionName));
 
-            // Health Checks
-            services.ConfigureHealthChecks(Configuration);
-            services.AddHealthChecks();
+            // Info Management
+            services.ConfigureInfoManagement(Configuration);
 
-            // Web Api
-            services.ConfigureApiDocs(Configuration)
-                .AddControllers()
-                .AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<Startup>());
+            // Health Checks
+            services.ConfigureHealthChecks(Configuration)
+                .AddHealthChecks();
 
             // Forwarded Headers
             services.ConfigureForwardedHeaders();
-
-            // Configure Api Behavior Options
-            services.ConfigureApiBehaviorOptions();
-
-            // Add Orleans Streams Services
-            services.AddStreamFactory();
         }
 
         // This method gets called by the runtime. Use this method to configure Orleans.
@@ -68,11 +54,7 @@ namespace fluffyspoon.email
             var configuration = ctx.Configuration;
 
             builder.ConfigureCluster(configuration)
-                .UseDashboard(x =>
-                {
-                    x.BasePath = "/dashboard";
-                    x.HostSelf = false;
-                })
+                .UseDashboard(x => x.HostSelf = false)
                 .ConfigureEndpoints()
                 .AddAssemblies(typeof(EmailSenderGrain))
                 .AddAssemblies(typeof(IEmailGrain))
@@ -100,17 +82,9 @@ namespace fluffyspoon.email
             app.UseForwardedHeaders();
             app.UsePathBaseFromConfiguration();
             app.UseCorrelation();
-            app.UseRouting();
-            app.UseFluentValidationMiddleware();
             app.UseHealthChecks();
             app.UseInfoManagement();
-            app.UseApiDocs();
-            app.UseOrleansDashboard(new DashboardOptions()
-            {
-                BasePath = "/dashboard",
-                HostSelf = false
-            });
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseOrleansDashboard(new DashboardOptions {BasePath = "/dashboard"});
         }
     }
 }

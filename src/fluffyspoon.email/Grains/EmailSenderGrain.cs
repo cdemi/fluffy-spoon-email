@@ -1,27 +1,31 @@
+using demofluffyspoon.contracts;
+using demofluffyspoon.contracts.Grains;
+using demofluffyspoon.contracts.Models;
+using fluffyspoon.registration.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Orleans;
+using Orleans.Streams;
 using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Mail;
-using Orleans;
-using Orleans.Streams;
 using System.Threading.Tasks;
-using demofluffyspoon.contracts;
-using demofluffyspoon.contracts.Grains;
-using demofluffyspoon.contracts.Models;
-using fluffyspoon.email.ViewModels;
-using Microsoft.Extensions.Options;
 
-namespace fluffyspoon.email.Grains
+namespace fluffyspoon.registration.Grains
 {
     [ImplicitStreamSubscription(nameof(UserVerifiedEvent))]
     public class EmailSenderGrain : Grain, IEmailGrain, IAsyncObserver<UserVerifiedEvent>
     {
         private readonly SmtpOptions _smtpOptions;
+        private readonly ILogger<EmailSenderGrain> _logger;
+
         private IAsyncStream<EmailSentEvent> _emailSentStream;
 
-        public EmailSenderGrain(IOptions<SmtpOptions> smtpOptions)
+        public EmailSenderGrain(IOptions<SmtpOptions> smtpOptionsAccessor, ILogger<EmailSenderGrain> logger)
         {
-            _smtpOptions = smtpOptions.Value;
+            _smtpOptions = smtpOptionsAccessor.Value;
+            _logger = logger;
         }
 
         public override async Task OnActivateAsync()
@@ -38,17 +42,20 @@ namespace fluffyspoon.email.Grains
 
         public async Task OnNextAsync(UserVerifiedEvent item, StreamSequenceToken token = null)
         {
-            SmtpClient smtpClient = new SmtpClient(_smtpOptions.Hostname)
+            var smtpClient = new SmtpClient(_smtpOptions.Hostname)
             {
                 Credentials = new NetworkCredential(_smtpOptions.Username, _smtpOptions.Password)
             };
 
+            _logger.LogInformation("Sending email to {email}", item.Email);
+
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            smtpClient.Send("test@librenms.99bits.net", item.Email, "User Verified Successfully", "Congratulations, your user has been verified");
+            smtpClient.Send("test@librenms.99bits.net", item.Email, "User Verified Successfully",
+                "Congratulations, your user has been verified");
             stopwatch.Stop();
-            
-            await _emailSentStream.OnNextAsync(new EmailSentEvent()
+
+            await _emailSentStream.OnNextAsync(new EmailSentEvent
             {
                 TimeTakeToSend = stopwatch.Elapsed
             });
