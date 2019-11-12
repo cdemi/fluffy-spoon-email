@@ -46,13 +46,18 @@ namespace fluffyspoon.registration.Grains
             {
                 Credentials = new NetworkCredential(_smtpOptions.Username, _smtpOptions.Password)
             };
+            
+            MailMessage mailMessage = new MailMessage();
+            mailMessage.From = new MailAddress("verification@librenms.99bits.net", "Fluffy Spoon");
+            mailMessage.To.Add(item.Email);
+            mailMessage.Subject = "User Verified!";
+            mailMessage.Body = "Congratulations, your user has been verified";
 
             _logger.LogInformation("Sending email to {email}", item.Email);
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            smtpClient.Send("test@librenms.99bits.net", item.Email, "User Verified Successfully",
-                "Congratulations, your user has been verified");
+            smtpClient.Send(mailMessage);
             stopwatch.Stop();
 
             await _emailSentStream.OnNextAsync(new EmailSentEvent
