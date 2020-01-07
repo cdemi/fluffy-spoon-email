@@ -30,9 +30,11 @@ namespace fluffyspoon.email.Grains
 
         public override async Task OnActivateAsync()
         {
+            // Producer
             var streamProvider = GetStreamProvider(Constants.StreamProviderName);
             _emailSentStream = streamProvider.GetStream<EmailSentEvent>(this.GetPrimaryKey(), nameof(EmailSentEvent));
 
+            // Consumer
             var userVerifiedStream =
                 streamProvider.GetStream<UserVerifiedEvent>(this.GetPrimaryKey(), nameof(UserVerifiedEvent));
             await userVerifiedStream.SubscribeAsync(this);
@@ -46,12 +48,15 @@ namespace fluffyspoon.email.Grains
             {
                 Credentials = new NetworkCredential(_smtpOptions.Username, _smtpOptions.Password)
             };
-            
-            MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress("verification@librenms.99bits.net", "Fluffy Spoon");
+
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress("verification@librenms.99bits.net", "Fluffy Spoon"),
+                Subject = "User Verified!",
+                Body = "Congratulations, your user has been verified"
+            };
+
             mailMessage.To.Add(item.Email);
-            mailMessage.Subject = "User Verified!";
-            mailMessage.Body = "Congratulations, your user has been verified";
 
             _logger.LogInformation("Sending email to {email}", item.Email);
 
@@ -60,10 +65,7 @@ namespace fluffyspoon.email.Grains
             smtpClient.Send(mailMessage);
             stopwatch.Stop();
 
-            await _emailSentStream.OnNextAsync(new EmailSentEvent
-            {
-                TimeTakeToSend = stopwatch.Elapsed
-            });
+            await _emailSentStream.OnNextAsync(new EmailSentEvent {TimeTakeToSend = stopwatch.Elapsed});
         }
 
         public Task OnCompletedAsync()
