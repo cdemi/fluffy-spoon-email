@@ -17,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Orleans;
 using Orleans.Hosting;
+using Orleans.Streams.Kafka.Config;
 using OrleansDashboard;
 using HostBuilderContext = Microsoft.Extensions.Hosting.HostBuilderContext;
 
@@ -52,6 +53,11 @@ namespace fluffyspoon.email
         public static void ConfigureOrleans(HostBuilderContext ctx, ISiloBuilder builder)
         {
             var configuration = ctx.Configuration;
+            var topicConfiguration = new TopicCreationConfig
+            {
+                AutoCreate = true,
+                Partitions = 8
+            };
 
             builder.ConfigureCluster(configuration)
                 .UseDashboard(x => x.HostSelf = false)
@@ -62,8 +68,8 @@ namespace fluffyspoon.email
                 .WithOptions(options =>
                 {
                     options.FromConfiguration(ctx.Configuration);
-                    options.AddTopic(nameof(UserVerifiedEvent));
-                    options.AddTopic(nameof(EmailSentEvent));
+                    options.AddTopic(nameof(UserVerificationEvent), topicConfiguration);
+                    options.AddTopic(nameof(EmailSentEvent), topicConfiguration);
                 })
                 .AddJson()
                 .Build()

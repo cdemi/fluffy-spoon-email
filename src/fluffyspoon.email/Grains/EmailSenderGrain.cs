@@ -14,8 +14,8 @@ using Orleans.Streams;
 
 namespace fluffyspoon.email.Grains
 {
-    [ImplicitStreamSubscription(nameof(UserVerifiedEvent))]
-    public class EmailSenderGrain : Grain, IEmailGrain, IAsyncObserver<UserVerifiedEvent>
+    [ImplicitStreamSubscription(nameof(UserVerificationEvent))]
+    public class EmailSenderGrain : Grain, IEmailGrain, IAsyncObserver<UserVerificationEvent>
     {
         private readonly SmtpOptions _smtpOptions;
         private readonly ILogger<EmailSenderGrain> _logger;
@@ -35,15 +35,20 @@ namespace fluffyspoon.email.Grains
             _emailSentStream = streamProvider.GetStream<EmailSentEvent>(this.GetPrimaryKey(), nameof(EmailSentEvent));
 
             // Consumer
-            var userVerifiedStream =
-                streamProvider.GetStream<UserVerifiedEvent>(this.GetPrimaryKey(), nameof(UserVerifiedEvent));
-            await userVerifiedStream.SubscribeAsync(this);
+            var userVerificationStream =
+                streamProvider.GetStream<UserVerificationEvent>(this.GetPrimaryKey(), nameof(UserVerificationEvent));
+            await userVerificationStream.SubscribeAsync(this);
 
             await base.OnActivateAsync();
         }
 
-        public async Task OnNextAsync(UserVerifiedEvent item, StreamSequenceToken token = null)
+        public async Task OnNextAsync(UserVerificationEvent item, StreamSequenceToken token = null)
         {
+            if (item.Status != UserVerificationStatusEnum.Verified)
+            {
+                return;
+            }
+
             var smtpClient = new SmtpClient(_smtpOptions.Hostname)
             {
                 Credentials = new NetworkCredential(_smtpOptions.Username, _smtpOptions.Password)
