@@ -1,4 +1,4 @@
-﻿namespace fluffyspoon.email.Options
+﻿namespace DemoFluffySpoon.Email.Options
 {
     public class SmtpOptions
     {

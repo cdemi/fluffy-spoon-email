@@ -1,8 +1,8 @@
-using demofluffyspoon.contracts;
-using demofluffyspoon.contracts.Grains;
-using demofluffyspoon.contracts.Models;
-using fluffyspoon.email.Grains;
-using fluffyspoon.email.Options;
+using DemoFluffySpoon.Contracts;
+using DemoFluffySpoon.Contracts.Grains;
+using DemoFluffySpoon.Contracts.Models;
+using DemoFluffySpoon.Email.Grains;
+using DemoFluffySpoon.Email.Options;
 using GiG.Core.DistributedTracing.Web.Extensions;
 using GiG.Core.HealthChecks.Extensions;
 using GiG.Core.Hosting.Extensions;
@@ -21,7 +21,7 @@ using Orleans.Streams.Kafka.Config;
 using OrleansDashboard;
 using HostBuilderContext = Microsoft.Extensions.Hosting.HostBuilderContext;
 
-namespace fluffyspoon.email
+namespace DemoFluffySpoon.Email
 {
     public class Startup
     {
@@ -63,7 +63,6 @@ namespace fluffyspoon.email
                 .UseDashboard(x => x.HostSelf = false)
                 .ConfigureEndpoints()
                 .AddAssemblies(typeof(EmailSenderGrain))
-                .AddAssemblies(typeof(IEmailGrain))
                 .AddKafka(Constants.StreamProviderName)
                 .WithOptions(options =>
                 {

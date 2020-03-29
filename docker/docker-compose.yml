@@ -2,9 +2,9 @@ version: '3.4'
 
 services:
   email:
-    image: fluffyspoon.email
+    image: demofluffyspoon.email
     build:
-      dockerfile: src/fluffyspoon.email/Dockerfile
+      dockerfile: src/DemoFluffySpoon.Email/Dockerfile
       context: ..
     environment:
       - ASPNETCORE_URLS=http://+:8080

@@ -1,18 +1,18 @@
+using DemoFluffySpoon.Contracts;
+using DemoFluffySpoon.Contracts.Grains;
+using DemoFluffySpoon.Contracts.Models;
+using DemoFluffySpoon.Email.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Orleans;
+using Orleans.Streams;
 using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using demofluffyspoon.contracts;
-using demofluffyspoon.contracts.Grains;
-using demofluffyspoon.contracts.Models;
-using fluffyspoon.email.Options;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Orleans;
-using Orleans.Streams;
 
-namespace fluffyspoon.email.Grains
+namespace DemoFluffySpoon.Email.Grains
 {
     [ImplicitStreamSubscription(nameof(UserVerificationEvent))]
     public class EmailSenderGrain : Grain, IEmailGrain, IAsyncObserver<UserVerificationEvent>
@@ -49,19 +49,8 @@ namespace fluffyspoon.email.Grains
                 return;
             }
 
-            var smtpClient = new SmtpClient(_smtpOptions.Hostname)
-            {
-                Credentials = new NetworkCredential(_smtpOptions.Username, _smtpOptions.Password)
-            };
-
-            var mailMessage = new MailMessage
-            {
-                From = new MailAddress("verification@librenms.99bits.net", "Fluffy Spoon"),
-                Subject = "User Verified!",
-                Body = "Congratulations, your user has been verified"
-            };
-
-            mailMessage.To.Add(item.Email);
+            var smtpClient = CreateSmtpClient();
+            var mailMessage = CreateVerificationEmail(item);
 
             _logger.LogInformation("Sending email to {email}", item.Email);
 
@@ -73,6 +62,29 @@ namespace fluffyspoon.email.Grains
             await _emailSentStream.OnNextAsync(new EmailSentEvent {TimeTakeToSend = stopwatch.Elapsed});
         }
 
+        private static MailMessage CreateVerificationEmail(UserVerificationEvent item)
+        {
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress("verification@librenms.99bits.net", "Fluffy Spoon"),
+                Subject = "User Verified!",
+                Body = "Congratulations, your user has been verified!!!11"
+            };
+            mailMessage.To.Add(item.Email);
+
+            return mailMessage;
+        }
+
+        private SmtpClient CreateSmtpClient()
+        {
+            var smtpClient = new SmtpClient(_smtpOptions.Hostname)
+            {
+                Credentials = new NetworkCredential(_smtpOptions.Username, _smtpOptions.Password)
+            };
+
+            return smtpClient;
+        }
+
         public Task OnCompletedAsync()
         {
             return Task.CompletedTask;
@@ -80,6 +92,8 @@ namespace fluffyspoon.email.Grains
 
         public Task OnErrorAsync(Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
+
             return Task.CompletedTask;
         }
     }
