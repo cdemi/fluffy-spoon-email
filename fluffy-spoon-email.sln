@@ -28,7 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "integration", "integration"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "performance", "performance", "{ED39EC32-14DC-42F0-81FC-44365E078CDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluffyspoon.email", "src\fluffyspoon.email\fluffyspoon.email.csproj", "{0F12CBAA-7B9F-4AA0-BC43-626899818D02}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoFluffySpoon.Email", "src\DemoFluffySpoon.Email\DemoFluffySpoon.Email.csproj", "{0F12CBAA-7B9F-4AA0-BC43-626899818D02}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Email", "Email", "{2575B22C-D459-4CB8-9C86-F995D217F71C}"
 EndProject
